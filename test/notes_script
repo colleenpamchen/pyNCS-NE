@@ -1,0 +1,15 @@
+sls2 = sls.astype(int)
+val = 25
+[(index, row.index(val)) for index, row in enumerate(sls2) if val in row]
+
+
+
+# useful parameters
+# input sensitivity
+c2.get_parameter('C3_IF_DC_P.fineValue')
+# leak rate
+c2.get_parameter('C3_IF_TAU1_N.fineValue')
+# weight
+c2.get_parameter('C3_PS_WEIGHT_EXC_F_N.fineValue')
+
+
