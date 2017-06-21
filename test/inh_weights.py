@@ -61,32 +61,45 @@ if __name__ == '__main__':
 		R_out[:,num8] = sls2
 		num8 = num8+1
 
-	RinNew=np.multiply(wgt,R_in)
-	## PolyFit	
-	for ii in range(0,255):
-		maxrate[ii] = np.amax(R_out[ii,:])*1.05256 # ~90
 
-		estimatedX[ii,:] = 1. / ( -(1./maxrate[ii]) + (1./( R_out[ii,:] ))) 
-
-		wb = np.polyfit( RinNew[ii,:], estimatedX[ii,:] ,1) # wb has two elements 
-		w_wgt[ii,0]=wb[0] # this column is the w(wgt), sweep through the wgt to find w. Start with w_wgt then estimate W using a line   
-		# w_wgt[ii,1]=wb[1]
-		estimatedY[ii,:] = 1./ ( (1./maxrate[ii]) + (1./ (wb[0] * RinNew[ii,:] + wb[1]) ) ) # estimated output Firing rate using estimated w_wgt 
-		
-	# plt.figure()
-	# pylab.plot(wgt, estimatedY[:,:], label='fit')
-	# pylab.plot(R_in[ii,:],R_out[ii,:])
-	# pylab.title('Exc weight = %s '%(ww))
-	# plt.xlabel('Input firing rates', fontsize=18)
-	# # plt.ylabel('estimated output firing rates', fontsize=18)
-	# pylab.show()	
-	plot(R_out.T,'o') 
-	plot(estimatedY.T)
-	# pylab.title('Exc weight = %s '%(ww))
-	pylab.title('Inh weight on firing rates')
-	plt.xlabel('Inh weight', fontsize=18)
-	plt.ylabel('estimated output firing rates', fontsize=18)
+	plot(R_out.T,'o')
 	show()
+
+
+
+
+
+
+
+
+
+
+	# RinNew=np.multiply(wgt,R_in)
+	# ## PolyFit
+	# for ii in range(0,255):
+	# 	maxrate[ii] = np.amax(R_out[ii,:])*1.05256 # ~90
+    #
+	# 	estimatedX[ii,:] = 1. / ( -(1./maxrate[ii]) + (1./( R_out[ii,:] )))
+    #
+	# 	wb = np.polyfit( RinNew[ii,:], estimatedX[ii,:] ,1) # wb has two elements
+	# 	w_wgt[ii,0]=wb[0] # this column is the w(wgt), sweep through the wgt to find w. Start with w_wgt then estimate W using a line
+	# 	# w_wgt[ii,1]=wb[1]
+	# 	estimatedY[ii,:] = 1./ ( (1./maxrate[ii]) + (1./ (wb[0] * RinNew[ii,:] + wb[1]) ) ) # estimated output Firing rate using estimated w_wgt
+	#
+	# # plt.figure()
+	# # pylab.plot(wgt, estimatedY[:,:], label='fit')
+	# # pylab.plot(R_in[ii,:],R_out[ii,:])
+	# # pylab.title('Exc weight = %s '%(ww))
+	# # plt.xlabel('Input firing rates', fontsize=18)
+	# # # plt.ylabel('estimated output firing rates', fontsize=18)
+	# # pylab.show()
+	# plot(R_out.T,'o')
+	# plot(estimatedY.T)
+	# # pylab.title('Exc weight = %s '%(ww))
+	# pylab.title('Inh weight on firing rates')
+	# plt.xlabel('Inh weight', fontsize=18)
+	# plt.ylabel('estimated output firing rates', fontsize=18)
+	# show()
 	
 		
 

@@ -33,6 +33,7 @@ if __name__ == '__main__':
 	sls1 = []
 	tls2 = []
 	sls2 = []
+	xspace17 = []
 
 	pyNCS.Connection(pop_exc1, pop_exc2, synapse='exc_fast',fashion='one2one')
 	nsetup.prepare() # this sets the connections 
@@ -46,6 +47,7 @@ if __name__ == '__main__':
 	    sls1.append(mon_core1.sl.mean_rates())
 	    tls2.append(mon_core2.copy())
 	    sls2.append(mon_core2.sl.mean_rates())
+	    xspace17.append(i) 
 
 	sls1=np.array(sls1)
 	sls2=np.array(sls2)
@@ -55,7 +57,8 @@ if __name__ == '__main__':
 	maxrate = np.array(sls2[16,:])*1.05
 	z = np.zeros((256,2))
 
-## PolyFit	
+## PolyFit
+	estY=np.zeros((17,256))	
 	num=0
 	for i in range(0,4352,17):
 	    first=i
@@ -71,6 +74,7 @@ if __name__ == '__main__':
   
 	    estimatedY = 1./( (1./maxrate[num]) + (1./(wb[0]*input_firingRate + wb[1])) )
 	    pylab.plot(input_firingRate, estimatedY, label='fit')
+	    estY[:,num]=estimatedY; 
 	    num=num+1
 
 	pylab.plot(sls1, sls2, 'o', label='data')
@@ -80,10 +84,16 @@ if __name__ == '__main__':
 	# pylab.grid(True)
 	pylab.show()   
 
-## CurveFit
-	
-	popt, pcov = curve_fit(sigmoid,x ,y )
-	sigmoid(x, *popt)
+	 
+	fjk = ( (sls2 - estY) **2)
+	mse = np.nanmean(fjk)
+	rmse = np.sqrt(mse)
+	# 44.28
+
+	mse = np.nanmean(fjk[1:17,:])
+	rmse = np.sqrt(mse)
+	# 3.15
+
 
 	
 

@@ -34,6 +34,7 @@ if __name__ == '__main__':
 
 	tls = []
 	sls = []
+	xspace32 = []
 
 	for i in range(0,255,8):
 	    c.configurator.set_parameter('C0_IF_DC_P.fineValue', i)
@@ -44,19 +45,14 @@ if __name__ == '__main__':
 	    tls.append(mon_core1.copy())
 	    #sls.append(mon_core1.mean_rates())
 	    sls.append(mon_core1.sl.mean_rates())
+	    xspace32.append(i) 
 
 	sls=np.array(sls)
 	plt.plot(sls,'g')	
+	xspace32=np.array(xspace32)
 
 	xspace = np.linspace(0, 1,32) 
 	ydata = sls 
-
-# Dan's double log fit: 
-	# a_doublelog=110
-	# b_doublelog=0.4
-	# r_doublelog=doublelog(xspace,a_doublelog,b_doublelog)
-
-	# plt.plot(r_doublelog,'k')
 	show()
 
 	# plt.plot(sls,'g')
@@ -78,28 +74,38 @@ if __name__ == '__main__':
 
 	x =zeros((256,256))
 	y=zeros((256,256))
+	y32=zeros((256,32))
 
 	for jj in range (256):
 		popt, pcov = curve_fit(sigmoid, xspace[:,jj], ydata[:,jj])
 		x = np.linspace(0, 255,256)
 		y[jj,:] = sigmoid(x, *popt)
+		y32[jj,:] = sigmoid(xspace32, *popt)
+
+
 		pylab.plot(x,y[jj,:], label='fit')
 
-		#print popt
-	# popt, pcov= curve_fit(doublelog,xdata,ydata)
+		# perr = np.sqrt(np.diag(pcov)) # squared root of the covariance 
 
-	# a_sigmoid= popt[0]
-	# b_sigmoid= popt[1]
-	# C_sigmoid= popt[2]
-	# r_sigmoid=sigmoid(xspace,a_sigmoid,b_sigmoid,C_sigmoid)
+	y32 = y32.T 
 
+	mse = ( (ydata - y32) **2).mean(axis=None)
+	rmse = np.sqrt(mse)
+
+	
 	pylab.plot(xspace, ydata, 'o', label='data')
 	# pylab.ylim(0, 2.05)
 	# pylab.legend(loc='upper left')
 	pylab.grid(True)
 	pylab.show()   
 
-rinexperiment=y[:,150]
+	rinexperiment=y[:,150]
+
+
+
+
+
+
 
 #Gorgios' modified sigmoid 
 # def sigmoid(x,a,b,d):

@@ -12,7 +12,7 @@ def sigmoid(x,a,b,d):
      return y
 
 pop_exc1=pyNCS.Population(name='core0')
-pop_exc1.populate_by_addr_list(nsetup, 'dynapse_u0', 'neuron',[[i,0] for i in range(256)])
+pop_exc1.populate_by_addr_list(nsetup, 'dynapse_u0', 'neuron',[[i,1] for i in range(256)])
 
 pop_exc2=pyNCS.Population(name='core3')
 pop_exc2.populate_by_addr_list(nsetup, 'dynapse_u0', 'neuron',[[i,3] for i in range(256)])
@@ -22,7 +22,7 @@ mon_core2 = nsetup.monitors.import_monitors_otf(pop_exc2)
 
 if __name__ == '__main__':
 
-	c0.load_parameters('setupfiles/biases_calibrations')
+	c0.load_parameters('setupfiles/biases_exc')
 	c = nsetup.chips['dynapse_u0']
 	nsetup.mapper.clear_cam_chip_core(0,0)
 	pyNCS.Connection(pop_exc1, pop_exc2, synapse='exc_fast',fashion='one2one')
@@ -48,7 +48,7 @@ if __name__ == '__main__':
 		sls1 = []
 		tls2 = []
 		sls2 = []
-		c.configurator.set_parameter('C0_IF_DC_P.fineValue', 150)
+		c.configurator.set_parameter('C1_IF_DC_P.fineValue', 150)
 		nsetup.stimulate(duration=1000)   
 		tls1.append(mon_core1.copy())
 		sls1.append(mon_core1.sl.mean_rates())
@@ -59,6 +59,7 @@ if __name__ == '__main__':
 		R_in[:,num8] = sls1
 		R_out[:,num8] = sls2
 		num8 = num8+1
+	Routnew=np.array(R_out)
 
 	RinNew=np.multiply(wgt,R_in)
 	## PolyFit	
@@ -72,6 +73,13 @@ if __name__ == '__main__':
 		# w_wgt[ii,1]=wb[1]
 		estimatedY[ii,:] = 1./ ( (1./maxrate[ii]) + (1./ (wb[0] * RinNew[ii,:] + wb[1]) ) ) # estimated output Firing rate using estimated w_wgt 
 		
+	fjk=(Routnew- estimatedY)**2
+	mse = np.nanmean(fjk)
+	rmse = np.sqrt(mse)
+
+
+	mse = np.nanmean(fjk[:,1:8])
+	rmse = np.sqrt(mse)
 	# plt.figure()
 	# pylab.plot(wgt, estimatedY[:,:], label='fit')
 	# pylab.plot(R_in[ii,:],R_out[ii,:])
@@ -84,62 +92,8 @@ if __name__ == '__main__':
 	# pylab.title('Exc weight = %s '%(ww))
 	pylab.title('')
 	plt.xlabel('Exc weight', fontsize=18)
-	plt.ylabel('estimated output firing rates', fontsize=18)
-
+	plt.ylabel('Estimated firing rates', fontsize=18)
 	show()
 		
-
-
-
-
-
-
-
-
-
-	# for i in range(256)
-	
-
-		    # num=num+1
- #    allweights=z[:,0]
-    	
- #    	# inputFiringRatesPopulation[:,:,num2=sls1
- #    	# outputFiringRatesPopulation[:,:,num2]=sls2
-
-	# for kk in range(256):
-	# 	ft=np.polyfit(inputWeights,allweights[kk,:], 1)
-	# 	w_params=[kk,0]=ft[0] # function params
-	# 	w_params=[kk,1]=ft[1] #
-	
-
-	# est_outputFiringRate = 1. / ( (1./maxrate[num]) + ( 1./ ( (weightfparams[-1,0]*inputWeights[7]+weightfparams[-1,1]) * input_firingRate + wb[1]) )  )
-	# pylab.plot(input_firingRate, est_outputFiringRate)
-	# pylab.plot(sls1, sls2, 'o', label='data')
-	# pylab.show() 
-
-	# w=(weightfparams[-1,0]*inputWeights+weightfparams[-1,1])
-	# pylab.plot(inputWeights,w) # for the last neuron
-	# pylab.show() 
-
-	# plot wgt x outputfiring rates
-	# 
-
-
-
-
-	# pylab.plot(sls1, sls2, 'o', label='data')
-	# pylab.plot(x,y, label='fit')
-	# pylab.ylim(0, 2.05)
-	# pylab.legend(loc='upper left')
-	# pylab.grid(True)
-	  
-
-## CurveFit
-	
-	# ydata needs to be flat
-	# x seems to be the spacing? 
-#	popt, pcov = curve_fit(sigmoid,x ,y )
-#	sigmoid(x, *popt)
-	
 
 

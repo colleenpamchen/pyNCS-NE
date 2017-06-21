@@ -13,7 +13,8 @@ def sigmoid(x,a,b,d):
      return y
 
 pop_exc1=pyNCS.Population(name='core0')
-pop_exc1.populate_by_addr_list(nsetup, 'dynapse_u0', 'neuron',[[i,0] for i in range(256)])
+# pop_exc1.populate_by_addr_list(nsetup, 'dynapse_u0', 'neuron',[[i,0] for i in range(256)])
+pop_exc1.populate_by_addr_list(nsetup, 'dynapse_u0', 'neuron',[[i,1] for i in range(256)])
 
 pop_exc2=pyNCS.Population(name='core3')
 pop_exc2.populate_by_addr_list(nsetup, 'dynapse_u0', 'neuron',[[i,3] for i in range(256)])
@@ -25,7 +26,7 @@ if __name__ == '__main__':
 	c0.load_parameters('setupfiles/biases_inhibitory')
 	c = nsetup.chips['dynapse_u0']
 	# nsetup.mapping.clear()
-	nsetup.mapper.clear_cam_chip_core(0,0)
+	nsetup.mapper.clear_cam_chip_core(0,3)
 	pyNCS.Connection(pop_exc1, pop_exc2, synapse='inh_fast',fashion='one2one')
 	nsetup.prepare() # this sets the connections 
 	time.sleep(8)
@@ -49,7 +50,7 @@ if __name__ == '__main__':
 		sls1 = []
 		tls2 = []
 		sls2 = []
-		c.configurator.set_parameter('C0_IF_DC_P.fineValue', 150)
+		c.configurator.set_parameter('C1_IF_DC_P.fineValue', 150)
 		nsetup.stimulate(duration=1000)   
 		tls1.append(mon_core1.copy())
 		sls1.append(mon_core1.sl.mean_rates())
@@ -61,6 +62,7 @@ if __name__ == '__main__':
 		R_out[:,num8] = sls2
 		num8 = num8+1
 
+	Routnew=np.array(R_out)
 	RinNew=np.multiply(wgt,R_in)
 	## PolyFit	
 	for ii in range(0,255):
@@ -93,7 +95,9 @@ if __name__ == '__main__':
 
 
 
-
+	fjk=(Routnew- estimatedY)**2
+	mse = np.nanmean(fjk)
+	rmse = np.sqrt(mse)
 
 
 
